@@ -1,0 +1,21 @@
+{
+  "name": "ESP_AutoWifi",
+  "version": "1.0.0",
+  "keywords": "Arduino, Wifi, ESP8266, NodeMCU, ESP32, M5Stack,AutoWifi",
+  "description": "A library that automatically connects to wifi ,with arduino for ESP32,ESP8266",
+  "repository":
+  {
+    "type": "git",
+    "url": "https://github.com/Super-DDG/ESP_AutoWifi"
+  },
+  "authors":
+  [
+    {
+        "name": "SuperDDG",
+        "email": "1948809566@qq.com",
+        "maintainer": true
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif8266, espressif32"
+}
