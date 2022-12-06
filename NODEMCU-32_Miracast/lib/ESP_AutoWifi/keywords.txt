@@ -1,0 +1,20 @@
+#######################################
+# Syntax Coloring Map For ESP_AutoWifi
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+AutoWifi	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin 	KEYWORD2
+webBegin	KEYWORD2
+wait_block_connection		KEYWORD2
+wait_nonblock_connection	KEYWORD2
+wifiWebConfig	KEYWORD2
+autoConfig		KEYWORD2
