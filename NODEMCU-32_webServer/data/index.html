@@ -1,0 +1,168 @@
+<!-- 文档类型声明 -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- 头部信息 -->
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 页面标题 -->
+    <title>远程幅频特性曲线</title>
+    <!-- 引入样式表 -->
+    <link rel="stylesheet" href="./style.css">
+    <!-- 引入 jQuery 库 -->
+    <script src="./jq.js"></script>
+    <!-- 引入 Chart.js 库 -->
+    <script src="./chart.js"></script>
+  </head>
+
+  <body>
+    <!-- 画布 -->
+    <div>
+      <canvas id="myChart"></canvas>
+    </div>
+
+    <!-- 按钮控件1 -->
+    <div class="auto-scan">
+      <!-- 文字描述 -->
+      <div class="info">
+        <p>自动扫频</p>
+      </div>
+      <!-- 按钮控件1-蓝色 -->
+      <div class="toggle-btn blue">
+        <!-- 复选框 -->
+        <input type="checkbox" id="auto_scan_btn" />
+        <!-- 开关标记 -->
+        <div class="toggle__indicator" for="auto_scan_btn"></div>
+      </div>
+    </div>
+
+    <!-- 按钮控件2 -->
+    <div class="scales_type">
+      <!-- 文字描述 -->
+      <div class="info">
+        <p>纵坐标刻度类型(对数/线性)</p>
+      </div>
+      <!-- 按钮控件2-绿色 -->
+      <div class="toggle-btn green">
+        <!-- 复选框 -->
+        <input type="checkbox" id="scales_type_btn"/>
+        <!-- 开关标记 -->
+        <div class="toggle__indicator" for="scales_type_btn"></div>
+      </div>
+    </div>
+
+  </body>
+
+  <script>
+    // 21个点
+    const labels = [
+      '100', '10k', '20k', '30k', '40k',
+      '50k', '60k', '70k', '80k', '90k',
+      '100k', '110k', '120k', '130k', '140k',
+      '150k', '160k', '170k', '180k', '190k',
+      '200k'
+    ];
+
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'TestData',
+        // data: [66, 73, 97, 69, 51, 57, 28, 69, 36, 91, 
+        //       67, 99, 88, 45, 73, 25, 85, 31, 22, 45,
+        //       53],
+        data: [],
+        // 关闭点的下方面积填充
+        fill: false,
+        // 背景色和线色
+        backgroundColor: 'rgb(255, 99, 132,0.5)',
+        borderColor: 'rgb(255, 99, 132)',
+        // 关闭在数据集的其他点上绘制数据集的活动点
+        drawActiveElementsOnTop: false,
+        // 张力系数
+        tension: 0.5
+      }]
+    };
+
+    const config = {
+      type: 'line', //折线图
+      data: data,   //数据来源
+
+      options: {
+        // x\y坐标轴设置
+        scales: {
+          x: {
+            title: {
+              display: true, //始终保持显示
+              text: "频率/Hz"
+            }
+          },
+          y: {
+            type: 'logarithmic', //对数坐标轴
+            title: {
+              display: true,
+              text: '增益/dB'
+            }
+          }
+        },
+      
+        /* 数据改变时的速度 */
+        animation: {
+          duration: 300,
+        },
+        /* 其他配置 */
+        plugins: {
+          /* 标题 */
+          title: {
+            display: true,
+            text: '远程幅频率特性曲线',
+            font: {
+              size: 30,
+            },
+          }
+        }
+      },
+    };
+  </script>
+
+  <script>
+    const host = window.location.hostname;
+    const myChart = new Chart(
+      document.getElementById('myChart'),
+      config
+    );
+
+    setInterval(() => {
+      $.ajax({
+        url: `/api/update`,
+        type: `GET`,
+        success: (data) => {
+          console.log(data)
+          myChart.data.datasets[0].data = eval(data);
+          myChart.update();
+        }
+      })
+    }, 1000);
+    // setInterval(() => {
+    //   $.ajax({
+    //     url: `/api/update`,
+    //     type: `GET`,
+    //     success: (data) => {
+    //       myChart.data.datasets[0].data =  parseFloat(this.responseText);
+    //       myChart.update();
+    //     }
+    //   })
+    // }, 1000);
+
+      /* 纵坐标刻度 */
+  $("#scales_type_btn").click((e) => {
+    if (e.target.checked) {
+      myChart.config._config.options.scales.y.type = 'linear';
+      myChart.update();
+    } else {
+      myChart.config._config.options.scales.y.type = 'logarithmic';
+      myChart.update();
+    }
+  })
+  </script>
+</html>

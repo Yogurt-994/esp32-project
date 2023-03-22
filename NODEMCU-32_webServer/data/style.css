@@ -1,0 +1,85 @@
+body {
+  margin: 0;
+}
+
+div.toggle-btns {
+  position: absolute; /* 绝对定位 */
+  top: 50%; /* 距离顶部50% */
+  left: 50%; /* 距离左边50% */
+  transform: translate(-50%, -50%); /* 位移 */
+}
+div.toggle-btn {
+  margin: 10px; /* 外边距 */
+}
+.toggle-btn .toggle__indicator {
+  position: relative; /* 相对定位 */
+  display: block; /* 块级元素 */
+  width: 40px; /* 宽度 */
+  height: 25px; /* 高度 */
+  background-color: #aaa; /* 背景色 */
+  border-radius: 15px; /* 圆角 */
+  transition: all 100ms linear; /* 过渡 */
+}
+
+.toggle-btn .toggle__indicator:after {
+  position: relative; /* 相对定位 */
+  content: ""; /* 内容 */
+  width: 20px; /* 宽度 */
+  height: 20px; /* 高度 */
+  background-color: #fff; /* 背景色 */
+  display: block; /* 块级元素 */
+  border-radius: 50%; /* 圆角 */
+  top: 2.5px; /* 距离顶部2.5px */
+  left: 2.5px; /* 距离左边2.5px */
+  transition: all 100ms linear; /* 过渡 */
+}
+
+.toggle-btn input:checked + .toggle__indicator {
+  background: #00acee;
+}
+
+.toggle-btn.red input:checked + .toggle__indicator {
+  background-color: orangered;
+}
+
+.toggle-btn.green input:checked + .toggle__indicator {
+  background-color: green;
+}
+
+.toggle-btn input:checked + .toggle__indicator:after {
+  left: 18px;
+}
+
+.toggle-btn input {
+  position: absolute; /* 绝对位置 */
+  opacity: 0; /* 透明度 */
+  transform: translate(-1px); /* 位移 */
+  width: 40px; /* 宽度 */
+  height: 20px; /* 高度 */
+  border-radius: 30px; /* 圆角 */
+  z-index: 5;
+}
+
+.scales_type {
+  position: absolute;
+  top: 40px;
+  right: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.scales_type .info {
+  font-size: 16px;
+}
+
+.auto-scan {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  display: flex;
+  align-items: center;
+}
+
+.scales-type .info {
+  font-size: 16px;
+}
