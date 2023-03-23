@@ -142,19 +142,9 @@
           myChart.update();
         }
       })
-    }, 1000);
-    // setInterval(() => {
-    //   $.ajax({
-    //     url: `/api/update`,
-    //     type: `GET`,
-    //     success: (data) => {
-    //       myChart.data.datasets[0].data =  parseFloat(this.responseText);
-    //       myChart.update();
-    //     }
-    //   })
-    // }, 1000);
+    }, 4000);
 
-      /* 纵坐标刻度 */
+  /* 纵坐标刻度 */
   $("#scales_type_btn").click((e) => {
     if (e.target.checked) {
       myChart.config._config.options.scales.y.type = 'linear';
@@ -164,5 +154,17 @@
       myChart.update();
     }
   })
+
+  //扫频开关
+  var xhr = new XMLHttpRequest();
+  $("#auto_scan_btn").click((e) => {
+    if (e.target.checked) {
+      xhr.open("GET","/update?output="+e.target.checked, true);
+    } else {
+      xhr.open("GET","/update?output="+e.target.checked, true);
+    }
+    xhr.send();
+  })
+
   </script>
 </html>

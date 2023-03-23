@@ -1,7 +1,6 @@
 // Import required libraries
 #include "WiFi.h"
 #include "ESPAsyncWebServer.h"
-#include "DNSServer.h"
 #include "SPIFFS.h"
 
 //在端口80上创建AsyncWebServer对象
@@ -46,22 +45,23 @@ String readUartData()
     char temp;
     // char recvNum[100];
 
-    memset(recvNum, 0, sizeof(recvNum));    //清空我们的目标字符串存储区域
+    // memset(recvNum, 0, sizeof(recvNum));    //清空我们的目标字符串存储区域
     if(i!=0)
     {
         j = 0;
+        memset(recvNum, 0, sizeof(recvNum));    //清空我们的目标字符串存储区域
         Serial.print("The amount of data received by the serial port is:");
         Serial.println(Serial1.available());
         while (i--)
         {
             /* code */
             temp = Serial1.read();
-            Serial.print(temp);
+            // Serial.print(temp);
             recvNum[j] = temp;
             j++;
         }
-        Serial.print("Data:");
-        Serial.print(recvNum);
+        // Serial.print("Data:");
+        // Serial.print(recvNum);
     }
     else
     {
@@ -79,6 +79,7 @@ void spiffsInit()
     }
 }
 
+const char* PARAM_INPUT = "output";
 void serverRequest()
 {
     // 当服务器收到根"/"URL请求时，将index.html文件发送至客户端
@@ -98,10 +99,28 @@ void serverRequest()
     {
         request->send(SPIFFS, "/jq.js");
     });
+
+    //ESP32服务端将数据传入网页端(客户端)
     server.on("/api/update", HTTP_GET, [](AsyncWebServerRequest *request)
     {
         request->send_P(200, "text/plain", readUartData().c_str());
         // request->send_P(200, "text/plain", String("[66,73,97,69,51,57,28,69,36,91,67,99,88,45,73,25,85,31,22,45,53]").c_str());
+    });
+
+    //网页端（客户端）向ESP32服务端发送数据
+    server.on("/update",HTTP_GET, [](AsyncWebServerRequest *request)
+    {
+        String inputMessage;
+        if (request->hasParam(PARAM_INPUT)) 
+        {
+            inputMessage = request->getParam(PARAM_INPUT)->value();
+        }
+        else 
+        {
+            inputMessage = "No message sent";
+        }
+        Serial.println(inputMessage);
+        request->send(200, "text/plain", "OK");
     });
 }
 
