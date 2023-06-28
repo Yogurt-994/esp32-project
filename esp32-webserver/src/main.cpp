@@ -13,12 +13,15 @@
 #include "ESPAsyncWebServer.h"
 
 WiFiConfig mywifi = {
-    "dxxy16-402-1",
-    "dxxy16402"};
+    // "dxxy16-402-1",
+    // "dxxy16402"
+    "dxxy16-403-1",
+    "1234567890"};
 
 ParamConfig param = {
     "output",
-    "state"};
+    "state",
+    "input1"};
 
 char recv_num[100];
 
@@ -110,18 +113,59 @@ const char index_html[] PROGMEM = R"rawliteral(
             vertical-align: middle;
             padding-bottom: 15px;
         }
+
+        /* Modified form style */
+        #myForm {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #myForm input[type="text"] {
+            width: 150px;
+            height: 30px;
+            font-size: 1.2rem;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+
+        #myForm input[type="submit"] {
+            height: 32px;
+            font-size: 1.2rem;
+            padding: 0 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+
+        /* Font style for Threshold */
+        #myForm label {
+            font-size: 1.2rem;
+        }
+
     </style>
 </head>
 
 <body>
     %BUTTONPLACEHOLDER%
-
     <p>
         <i class="fas fa-thermometer-half" style="color:#059e8a;"></i>
         <span class="ds-labels">Temperature Celsius</span>
         <span id="temperaturec">%TEMPERATUREC%</span>
         <sup class="units">&deg;C</sup>
     </p>
+
+    <div id="result"></div>
+    <br>
+    <form id="myForm" onsubmit="handleSubmit(event)" action="/get">
+        <label for="input1">Threshold:</label>
+        <input type="text" name="input1" id="input1">
+        <input type="submit" value="Submit">
+    </form>
 
     <script>
         function toggleCheckbox(element) {
@@ -141,6 +185,24 @@ const char index_html[] PROGMEM = R"rawliteral(
             xhttp.open("GET", "/temperaturec", true);
             xhttp.send();
         }, 20000);
+        
+       function handleSubmit(event) {
+            event.preventDefault(); 
+            var form = document.getElementById("myForm"); 
+            var thresholdValue = form.elements["input1"].value; 
+            
+            var resultContainer = document.getElementById("result");
+            resultContainer.innerHTML = "Threshold: " + thresholdValue;
+            
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", "/get?input1=" + encodeURIComponent(thresholdValue), true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log(xhr.responseText);
+                }
+            };
+            xhr.send();
+        }
     </script>
 </body>
 
@@ -170,6 +232,11 @@ void loop()
 {
 }
 
+// void notFound(AsyncWebServerRequest *request)
+// {
+//     request->send(404, "text/plain", "Not found");
+// }
+
 void server_request()
 {
     // Route for root / web page
@@ -197,6 +264,28 @@ void server_request()
 
     server.on("/temperaturec", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send_P(200, "text/plain", read_uart_data().c_str()); });
+
+    // Send a GET request to <ESP_IP>/get?input1=<inputMessage>
+    server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
+              {
+        String inputMessage;
+        String inputParam;
+
+        // GET input1 value on <ESP_IP>/get?input3=<inputMessage>
+        if (request->hasParam(param.PARAM_INPUT_3)) {
+        inputMessage = request->getParam(param.PARAM_INPUT_3)->value();
+        inputParam = param.PARAM_INPUT_3;
+        }
+        else {
+        inputMessage = "No message sent";
+        inputParam = "none";
+        }
+        Serial.println(inputMessage);
+        request->send(200, "text/html", "HTTP GET request sent to your ESP on input field (" 
+                                        + inputParam + ") with value: " + inputMessage +
+                                        "<br><a href=\"/\">Return to Home Page</a>"); });
+
+    // server.onNotFound(notFound);
 
     // Start server
     server.begin();

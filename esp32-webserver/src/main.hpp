@@ -15,6 +15,7 @@ struct ParamConfig
     /* data */
     const char *PARAM_INPUT_1;
     const char *PARAM_INPUT_2;
+    const char *PARAM_INPUT_3;
 };
 
 String read_uart_data();
