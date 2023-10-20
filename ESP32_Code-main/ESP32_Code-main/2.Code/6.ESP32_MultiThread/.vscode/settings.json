@@ -1,0 +1,10 @@
+{
+	"files.associations": {
+		"*.wxss": "css",
+		"*.wxml": "html",
+		"algorithm": "cpp",
+		"cmath": "cpp",
+		"cstdint": "cpp",
+		"cinttypes": "cpp"
+	}
+}
